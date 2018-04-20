@@ -1,0 +1,58 @@
+\section{Introduction}
+Although the message passing interface (MPI) has been the most predominant parallel programing model since the mid-1900s, today's trend of having an increasing number of cores per CPU (computing component, socket,chip, ???) have created the need for alternative approaches.
+
+\medskip
+
+The traditional use of the MPI programing model, in which all the communication between MPI processes is handled essentially by the send/receive family of functions, has been evolving towards \textbf{hybrid models}. In a hybrid model, the threads or processes within a node communicate directly with each other by sharing the node's memory with no traditional send/receive involved, while the inter-node communication is indeed handled using the send/receive traditional approach. Currently, one of the most common hybrid programing model combines MPI and OpenMP, denoted here as MPI+OpenMP.
+
+\medskip
+
+The latest MPI standard (MPI-3) added several functions to allow processes that exist within a node to directly allocate and share the node's memory, in a way similar to OpenMP. This update to the MPI standard permits a new hybrid model in which traditional MPI is still used for inter-node communication while the new shared memory capabilities of MPI (MPI$_{sm}$) are used for the communication between the processes inside the node. In this document, this new hybrid model is denoted as MPI+MPI$_{sm}$ to distinguish it from MPI+OpenMP.
+
+\medskip
+
+
+Additionally, this new shared memory programing capabilities of MPI-3 (MPI$_{sm}$) could turn it into a viable alternative to OpenMP as a shared memory programing model.
+ 
+\medskip
+
+
+The objective of this guide is to describe, via examples, the new shared memory capabilities of MPI-3 and to explore its viability in the context of \textbf{share memory programing model} and then as a \textbf{hybrid programing model}.
+
+
+\subsection*{Systems and compiler used}
+
+All the computer utilized in this study corresponds to systems having more than one socket (ccNUMA nodes). These kind of architecture is ubiquitous nowadays. On those systems all the memory is accessible by all the cores, however the memory is distributed between the sockets. The efficient programing of these systems requires awareness of issues such as memory effects and thread/process placement.
+
+
+Three compilers were used in the results presented in the following sections: the GNU \textbf{gcc}  version 7.3.0 (OpenMP 4.5), the Intel \textbf{icc} version 18.0.1 (OpenMP 5.0) and the  PGI \textbf{pgcc} version 18.3 (OpenMP 4.0). For the MPI implementation used, \textbf{gcc} and the \textbf{pgi} compliers both use \textbf{open-mpi} while the \textbf{intel} compiler used it own mpi implementation.
+
+
+
+\subsection*{Organization}
+
+
+\medskip
+
+The lessons learned during the development of this work will be remarked and commented in the coming sections. This document is organized as follows:
+
+\begin{itemize} 
+\item Section 2 describes a small set of MPI$_{sm}$ functions required to use a shared memory programing model. %, denoted in this guide as MPI$_{sm}$.
+
+\item Section 3 presents and compare results of the Stream benchmark obtained using MPI$_{sm}$ and OpenMP.
+
+\item In Section 4, two computer programs are used to compare the performance of MPI$_{sm}$ and OpenMP.
+
+\item Section 5 describes a small set of the MPI functions that can be used to effectively implement hybrid programs.
+
+\item In Section 6, one computer program is used to compare the performance of two hybrid programing models: MPI+MPI$_{sm}$ and MPI+OpenMP.
+
+%\item Section 5 describe some additional functions and techniques required by hybrid programing. Additionally it compares two hybrid programing model: MPI+MPI$_{sm}$ and MPI+OpenMP.
+
+\end{itemize}
+
+
+
+
+
+

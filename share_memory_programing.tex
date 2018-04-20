@@ -1,0 +1,171 @@
+\section{Share Memory Programing}
+
+In this section two computer programs are used to evaluate the performance of the MPI$_{sm}$ by comparing it to equivalent versions of the programs developed using OpenMP. The objective is to test the capabilities of MPI$_{sm}$ as a shared memory programing model and to evaluate its viability as an alternative to OpenMP.
+
+
+\subsection*{Jacobi iteration}
+The first program consists of a Jacobi iteration, solving the 2D-Laplace equation, a common technique to approximate the solution of elliptic PDEs within some allowable tolerance. Results form two versions (MPI$_{sm}$ vs OpenMP) of the program are compared below. The two versions of this program were later modified into hybrid versions. Results for the hybrid cases are presented in section 5.
+
+Figure \ref{fig:Figure1} presents results from the Jacobi iteration program. This results were obtained in \emph{dunkel}; a computer having an Intel(R) Xeon(R) CPU E5-2650 v4 running at 2.20GHz. The plot in the left (Figure \ref{fig:RatioDunkel}) shows the ratio between the time taken by the MPI$_{sm}$ to the OpenMP versions of this program as a function of the number of threads/processors used, while the plot in the right (Figure \ref{fig:TimeDunkel}) shows actual execution time.
+
+
+\begin{figure} [h!]
+    \centering
+    \captionsetup{justification=raggedright, singlelinecheck=false}
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.1/dunkelRatio.pdf}
+      \caption[]{Jacobi iteration - Ratio MPI$_{sm}$ to OpenMP.}
+      \label{fig:RatioDunkel}
+    \end{subfigure}%
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.1/dunkel.pdf}
+      \caption{Jacobi iteration - Execution time}
+      \label{fig:TimeDunkel}
+    \end{subfigure}
+\caption{Comparing shared memory programing models - Jacobi iteration in dunkel}
+\label{fig:Figure1}
+\end{figure}
+
+Figure \ref{fig:Figure2} presents similar results obtained in one node of \emph{Blue Waters}. In this case the CPU is an AMD Opteron(TM) Processor 6276 running at 2.30GHz. 
+
+\begin{figure} [h!]
+    \centering
+    \captionsetup{justification=raggedright, singlelinecheck=false}
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.1/blueWatersRatio.pdf}
+      \caption{Jacobi iteration - Ratio MPI$_{sm}$ to OpenMP.}
+      \label{fig:RatioBW}
+    \end{subfigure}%
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.1/blueWaters.pdf}
+      \caption{Jacobi iteration - Execution time}
+      \label{fig:TimeBW}
+    \end{subfigure}
+\caption{Comparing shared memory programing models - Jacobi iteration in one \emph{Blue Waters} Node}
+\label{fig:Figure2}
+\end{figure}
+
+\medskip
+
+
+Figures \ref{fig:RatioDunkel} and \ref{fig:RatioBW} express the ratio of time taken by MPI$_{sm}$ to OpenMP to solve the same problem using the same number of iterations. While for \emph{dunkel} this ratio approach 0.5 as the number of processors/threads increases (meaning that MPI$_{sm}$ takes about half ot the time taken by OpenMP), for one node of \emph{Blue Waters} this ratio was close to 1.0 and independent of the number of processors/threads used in the solution.
+
+\medskip
+
+Figures \ref{fig:TimeDunkel} and \ref{fig:TimeBW} are shown here to provide a perspective of the time taken to achieve the solution. Every point shown in these plots correspond to the minimum time collected over 5 runs.
+\medskip
+
+
+
+\subsection*{Computational Fluid Dynamic}
+The second program used to compare these share memory programing models consists of a 3D Computational Fluid Dynamic (CFD) parallel program. The original version of the program was written in OpenMP. The program was modified to create an MPI$_{sm}$ version. The results shown corresponds to solutions using double precision arithmetics. 
+
+\medskip
+
+Figure \ref{fig:Figure3} and \ref{fig:Figure4} presents results from the CFD program. This results were obtained in the same computers used for the Jacobi iteration case. Once again, the plots in the left side shows the ratio between the time taken by the MPI$_{sm}$ to the OpenMP versions of this program as a function of the number of threads/processors used (a ratio grater than one means that MPI$_{sm}$ takes more time than OpenMP to produce a solution), while the plot in the right shows actual execution time.
+
+
+
+\begin{figure} [h!]
+    \centering
+    \captionsetup{justification=raggedright, singlelinecheck=false}
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/dunkelDPRatio.pdf}
+      \caption{Computational Fluid Dynamic - Ratio MPI$_{sm}$ to OpenMP.}
+      \label{fig:RatioDunkelCFD}
+    \end{subfigure}%
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/dunkelDP.pdf}
+      \caption{Computational Fluid Dynamic - Execution time}
+      \label{fig:TimeDunkelCFD}
+    \end{subfigure}
+\caption{Comparing shared memory programing models - CFD in \emph{dunkel}}
+\label{fig:Figure3}
+\end{figure}
+
+\medskip
+
+
+\begin{figure} [h!]
+    \centering
+    \captionsetup{justification=raggedright, singlelinecheck=false}
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/blueWatersDPRatio.pdf}
+      \caption{Computational Fluid Dynamic - Ratio MPI$_{sm}$ to OpenMP.}
+      \label{fig:RatioBWCFD}
+    \end{subfigure}%
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/blueWatersDP.pdf}
+      \caption{Computational Fluid Dynamic - Execution time}
+      \label{fig:TimeBWCFD}
+    \end{subfigure}
+\caption{Comparing shared memory programing models - CFD in one \emph{Blue Waters} Node}
+\label{fig:Figure4}
+\end{figure}
+
+
+
+For the CFD case, Figures \ref{fig:RatioDunkelCFD} and \ref{fig:RatioBWCFD}, presenting the ratio of time taken by MPI$_{sm}$ to OpenMP, show results that contrast with the ones obtained for the Jacobi iteration case. For both \emph{dunkel} and one node of \emph{Blue Waters}, this ratio is grater than one for two or more processes/threads and it has a tendency to increase as more processes/threads are added. This tendency to increase is more pronounced in \emph{Blue Waters} where this ratio grows to two for 12 processes/threads and still increases even more.
+
+Once again, Figures \ref{fig:TimeDunkelCFD} and \ref{fig:TimeBWCFD} are shown here to provide a perspective of the time taken to achieve the solution. 
+
+\medskip
+
+\begin{comment}
+\subsubsection*{Partial improvement using node topology}
+
+Information about hardware threads, core, cache, socket topology can help to implement binding between cores and processes/threads. It is known that applications with frequent synchronization between "neighboring" processes/threads could profit from placing them close together. To test this idea, a simple tool called \emph{\textbf{taskset}} was used in \emph{dunkel} in a setting similar to the one used to produce Figure \ref{fig:Figure3}. This particular computer (\emph{dunkel}) has two sockets, each having 12 cores, for a total of 24 cores, each corresponding to the 24 processes/threads shown in Figures \ref{fig:Figure1} and \ref{fig:Figure3}. The 12 cores in one socket of \emph{dunkel} shared 30 Mbi of L3 cache. A new experiment was set to run within a single socket using the '-c 0-11' parameter of taskset. 
+
+The results of this new experiment are shown in Figure \ref{fig:taskset}. Notice that only 12 processes/threads are uses. 
+
+\medskip
+
+
+\begin{figure} [h!]
+    \centering
+    \captionsetup{justification=raggedright, singlelinecheck=false}
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/dunkel-DP-1SoketRatio.pdf}
+      \caption{Computational Fluid Dynamic - Ratio MPI$_{sm}$ to OpenMP.}
+      \label{fig:RatioDunkelCFD_Pin}
+    \end{subfigure}%
+    \begin{subfigure}{.6\textwidth}
+      \hspace*{-1.5cm} 
+      \includegraphics[width=0.95\linewidth]{Plots/section3.2/dunkel-DP-1Soket.pdf}
+      \caption{Computational Fluid Dynamic - Execution time}
+      \label{fig:TimeDunkelCFD_Pin}
+    \end{subfigure}
+\caption{Comparing shared memory programing models - CFD in \emph{dunkel}}
+\label{fig:taskset}
+\end{figure}
+
+\medskip
+
+Notice that the ratio of time taken by MPI$_{sm}$ to OpenMP, shown in Figure \ref{fig:RatioDunkelCFD_Pin} is close to 1 indicating a similar performance between the MPI$_{sm}$ and the OpenMP versions of the program.
+...
+
+
+
+
+%similar behavior 
+
+%as the one shown in Figure \ref{fig:RatioDunkelCFD}, 
+
+%that the ratio MPI$_{sm}$ to OpenMP is almost always grater than one, and increasing as more processes/threads are used in the solution up to a value close to 1.7.
+
+\end{comment} 
+
+
+\subsection*{Analysis}
+The two cases presented in this section show conflicting results with respect to one shared memory programing model being better than the other. What is clear is that MPI$_{sm}$ can perform as good or better than OpenMP under the right conditions. To try to determine and understand what those condition are is part of what we are trying to accomplish.
+
+
