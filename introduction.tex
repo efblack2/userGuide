@@ -1,9 +1,63 @@
 \section{Introduction}
-Although the message passing interface (MPI) has been the most predominant parallel programing model since the mid-1900s, today's trend of having an increasing number of cores per CPU (computing component, socket,chip, ???) have created the need for alternative approaches.
+%Although 
+The message passing interface (MPI) has been the predominant parallel programing model since the mid-1900. It constitutes the base of the \emph{distributed} programming model in which components located on networked computers communicate and coordinate their actions by passing messages. Contrastingly, in a \emph{shared-memory} programming model, parallel processes share a global memory address space that they read and write to asynchronously. 
 
-\medskip
+Today's clusters often comprise multiple cores per node sharing memory, and the nodes themselves are connected by a fast network. The current trends shows an increasing number of cores per node as well as a declining memory per core.
 
-The traditional use of the MPI programing model, in which all the communication between MPI processes is handled essentially by the send/receive family of functions, has been evolving towards \textbf{hybrid models}. In a hybrid model, the threads or processes within a node communicate directly with each other by sharing the node's memory with no traditional send/receive involved, while the inter-node communication is indeed handled using the send/receive traditional approach. Currently, one of the most common hybrid programing model combines MPI and OpenMP, denoted here as MPI+OpenMP.
+\subsection*{Programming for Multicore}
+
+The traditional use of the \emph{distributed} programming model, in which all the communication between processes is handled essentially by the send/receive family of MPI functions, has been evolving towards \textbf{hybrid models}. In a hybrid model, the threads or processes within a node communicate directly with each other by sharing the node's memory with no traditional send/receive involved, while the inter-node communication is indeed handled using the send/receive traditional approach. Currently, one of the most common hybrid programing model for multicore combines MPI and OpenMP, denoted here as MPI+OpenMP.
+
+
+
+\begin{comment}
+
+
+
+
+
+
+Today's trend of having 
+an increasing number of cores per CPU (computing component, socket,chip) have created the need for approaches that combines the best of this two programing models: 
+
+
+Almost all chips are multicore these days
+
+
+ into what is nowadays known as Hybrid programming models.
+
+
+It describes parallelism between processes having separate memory space; 
+
+a 
+
+
+in contrast to 
+
+\emph{thread} parallelism which provides a shared memory model within a process. 
+
+OpenMP and Pthreads are common examples of the \emph{thread} parallelism model.
+
+
+
+
+Scale of machines to come encourage the use of different programming models to address issues such as
+
+\begin{itemize} 
+
+\item Declining memory per core
+
+\item Multiple threads/core
+
+\item Load balance
+
+\item Algorithmic issues
+
+
+\end{itemize}
+\end{comment}
+
+
 
 \medskip
 
