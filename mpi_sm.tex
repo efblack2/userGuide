@@ -1,15 +1,33 @@
 \section{MPI Shared Memory (MPI$_{sm}$)}
 
-This section lists and briefly describes the functions and data types used in writing MPI$_{sm}$ programs. Some of these functions have existed in MPI for years, while others have recently been added to the standard. Refer to the examples in the following sections or the MPI standard for a more detailed description.
+The MPI-3 standard developed an interface that allow processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of the shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
+\medskip
+
+Additionally, to successfully develop hybrid programming, in which traditional send/receive functionality is used to communicate information among nodes while intra-node communication is handled via shared-memory, it is necessary a mechanism to distinguish between processes that belong to a given node from processes belonging to different nodes. This section also describes a procedure to achieve this goal. 
+
+%Refer to the examples in the following sections or the MPI standard for a more detailed description.
+
+\medskip
+
+A description of the basic data types and function required by an MPI$_{sm}$ application and a pseudo code illustrating their use follows.
+
+
+\medskip
+
+
 
 \subsubsection*{Memory Window Data Type}
 
-The first steps in using Remote Memory Access (RMA) is to define the memory that will be available for remote memory operations. The memory in a process that can be accessed by another process through the use of RMA routines is called a \emph{memory window}. MPI defines a data type, \textbf{MPI\_Win}, to be used as a handle in order to create and destroy memory windows. In a similar way, MPI$_{sm}$ also uses this data type to dynamically allocate portions of shared memory to be used by processes within a node. Additionally, the \textbf{MPI\_Win} data type is also used to free the dynamically allocated shared memory when it is not longer needed.
+The memory in a process that can be accessed by another process through the use of Remote Memory Access (RMA) routines is called a \emph{memory window}. MPI-3 expand the use of memory windows into a portable mechanism that allows direct access, trough the CPU load/store instructions, of a process's memory by other process in the same node. Therefore, to use MPI$_{sm}$ it is required to define define memory windows.
+
+\medskip
+
+MPI defines a data type, \textbf{\texttt{MPI\_Win}}, to be used as a handle in order to create and destroy memory windows. In addition to the conventional RMA uses of this data type, MPI$_{sm}$ use the \textbf{\texttt{MPI\_Win}} data type to dynamically allocate portions of memory to be shared by processes within a node and also to free that shared memory when it is not longer needed.
 
 
 \subsubsection*{Shared Memory Communicator}
 
-Before being able to allocate shared memory, the processors belonging to the main communicator (\textbf{MPI\_COMM\_WORLD}) must be separated into sub-communicators of processors existing inside a single node. This is achieved by using the \textbf{MPI\_Comm\_split\_type()} function.
+Before being able to allocate shared memory, the processors belonging to the main communicator (\textbf{\texttt{MPI\_COMM\_WORLD}}) must be separated into sub-communicators of processors existing inside a single node. This is achieved by using the \textbf{\texttt{MPI\_Comm\_split\_type()}} function.
 
 \subsubsection*{Shared Memory Allocation}
 
@@ -17,7 +35,7 @@ Once the sub-communicator of processors existing inside a single node has been c
 
 \subsubsection*{Shared Memory Query}
 
-The address of the allocated shared memory segment is meaningful only to the calling process (and should not be communicated), therefore, another function, \textbf{MPI\_Win\_shared\_query()}, can be used to retrieve the local address of the shared memory on other processors.
+The address of the allocated shared memory segment is meaningful only to the calling process (and should not be communicated), therefore, another function, \textbf{\texttt{MPI\_Win\_shared\_query()}}, can be used to retrieve the local address of the shared memory on other processors.
 
 \subsubsection*{Synchronization Techniques}
 
@@ -32,6 +50,8 @@ When the shared memory is not longer needed, it should be freed with a call to \
 The following pseudo code provides an illustration of the sequence required to use the MPI$_{sm}$ programing mode. The code presented below uses the passive synchronization technique previously described.
 
 In line 6 a variable of type MPI\_Win is declared. In line 11 a shared memory communicator is created. Size and ranks for the processors belonging to the shared communicator are determined in lines 14 and 15. In line 18  shared memory are allocated. In line 27, just before the shared memory is utilized, the MPI\_Win\_lock\_all() is called. In line 23 a function is called to initialize the shared memory. In line 25 and 26, just before the shared memory can be utilized after initialization,calls to MPI\_Win\_sync() and MPI\_Barrirer() are done to ensure that the data is available. When the buffer containing the shared memory is not longer being modified, a call to the function MPI\_Unlock\_all() is required as shown in line 28. Finally the shared memory can be deallocated as shown in line 30.
+
+\newpage
 
 \begin{lstlisting}[style=CStyle]
 #include <stdlib.h>
