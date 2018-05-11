@@ -1,6 +1,6 @@
 \section{MPI Shared Memory (MPI$_{sm}$)}
 
-The MPI-3 standard developed an interface that allow processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of the shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
+The MPI-3 standard developed an interface that allow processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of a shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
 \medskip
 
 Additionally, to successfully develop hybrid programming, in which traditional send/receive functionality is used to communicate information among nodes while intra-node communication is handled via shared-memory, it is necessary a mechanism to distinguish between processes that belong to a given node from processes belonging to different nodes. This section also describes a procedure to achieve this goal. 
@@ -9,16 +9,14 @@ Additionally, to successfully develop hybrid programming, in which traditional s
 
 \medskip
 
-A description of the basic data types and function required by an MPI$_{sm}$ application and a pseudo code illustrating their use follows.
+A description of the basic data types and function required by applications using MPI$_{sm}$, and pseudo codes illustrating their use, follows. The description is not intended to be comprehensive and the reader should consult the MPI-3 standard\cite{MPI-3}  or \cite{UsingAdvancedMPI} for a more information.
 
 
 \medskip
 
-
-
 \subsubsection*{Memory Window Data Type}
 
-The memory in a process that can be accessed by another process through the use of Remote Memory Access (RMA) routines is called a \emph{memory window}. MPI-3 expand the use of memory windows into a portable mechanism that allows direct access, trough the CPU load/store instructions, of a process's memory by other process in the same node. Therefore, to use MPI$_{sm}$ it is required to define define memory windows.
+The memory in a process that can be accessed by another process through the use of Remote Memory Access (RMA) routines is called a \emph{memory window}. MPI-3 expand the use of memory windows into a portable mechanism that allows direct access, trough the CPU load/store instructions, of a process's memory by other process in the same node. Therefore, to use MPI$_{sm}$ it is required to define memory windows.
 
 \medskip
 
@@ -27,67 +25,194 @@ MPI defines a data type, \textbf{\texttt{MPI\_Win}}, to be used as a handle in o
 
 \subsubsection*{Shared Memory Communicator}
 
-Before being able to allocate shared memory, the processors belonging to the main communicator (\textbf{\texttt{MPI\_COMM\_WORLD}}) must be separated into sub-communicators of processors existing inside a single node. This is achieved by using the \textbf{\texttt{MPI\_Comm\_split\_type()}} function.
+Before being able to allocate shared memory, the processes belonging to the main communicator (\textbf{\texttt{MPI\_COMM\_WORLD}}) must be separated into sub-communicators of processes existing inside a single node (intracommunicator). This is achieved by using the \textbf{\texttt{MPI\_Comm\_split\_type()}} function.
+
+ 
 
 \subsubsection*{Shared Memory Allocation}
 
-Once the sub-communicator of processors existing inside a single node has been created, it can be used to allocate shared memory using the new \textbf{MPI\_Win\_allocate\_shared()} function. This function returns a process-local pointer containing the address of the shared memory allocated by the calling process.
+Once the memory window and the sub-communicator of processes existing inside a single node have been created, they are used to allocate shared memory using the new \textbf{\texttt{MPI\_Win\_allocate\_shared()}} function. This function returns a process-local pointer containing the address of the shared memory allocated by the calling process. It is a collective function and, therefore, must be called by all the processes of the intracommunicator, although any number of processes can specify a memory size=0.
 
-\subsubsection*{Shared Memory Query}
+\subsubsection*{Shared Memory Address Query}
 
-The address of the allocated shared memory segment is meaningful only to the calling process (and should not be communicated), therefore, another function, \textbf{\texttt{MPI\_Win\_shared\_query()}}, can be used to retrieve the local address of the shared memory on other processors.
+The shared memory address allocated by the \textbf{\texttt{MPI\_Win\_allocate\_shared()}} function is meaningful only to the calling process and should not be communicated. Therefore, the \textbf{\texttt{MPI\_Win\_shared\_query()}} function can be used to retrieve the local base address of the shared memory on other processors.
+
 
 \subsubsection*{Synchronization Techniques}
 
-This is a behavior that MPI$_{sm}$ models after RMA data transfers. There are two basic methods used by MPI to complete data transfers (meaning when the data is ready to be used by the receiving process): active and passive target synchronization. Active synchronization involves the use of the \textbf{MPI\_Win\_fence()} function while passive synchronization used a combination of the \textbf{MPI\_Win\_lock()}, \textbf{MPI\_Win\_sync()} ,  \textbf{MPI\_Barrier()} and  \textbf{MPI\_Win\_unlock()} functions. Since passive synchronization is regarded as an advanced technique and because it has been shown to outperform active synchronization, it was the synchronization scheme used in the results presented in the following sections.
+This is a behavior that MPI$_{sm}$ models after RMA data transfers. There are two basic methods used by MPI to complete data transfers (meaning when the data is ready to be used by the receiving process): active and passive target synchronization. 
+
+\medskip
+
+Active synchronization involves the use of the \textbf{\texttt{MPI\_Win\_fence()}} function while passive synchronization use a combination of the \textbf{\texttt{MPI\_Win\_lock()}}, \textbf{\texttt{MPI\_Win\_sync()}},  \textbf{\texttt{MPI\_Barrier()}} and \textbf{\texttt{MPI\_Win\_unlock()}} functions. 
+
+\medskip
+
+Passive synchronization is regarded as an advanced technique and it has been shown to outperform active synchronization in simple tests\cite{Samfass_2016} \cite{brinskiy2015}. However, active synchronization (\textbf{\texttt{MPI\_Win\_fence()}}) is less verbose, and the performance differences with respect to passive synchronization seems to diminish as the amount of work done in the context of the synchronization increases.
+
+\medskip
+
+All the examples and results shown in this work used the passive synchronization scheme unless explicitly indicated otherwise. This decision was made not because passive synchronization seems to outperform active synchronization, but because it was considered simpler to migrate form passive to active synchronization for any user wanting to test both techniques.
 
 \subsubsection*{Shared Memory Deallocation}
-When the shared memory is not longer needed, it should be freed with a call to \textbf{MPI\_Win\_free()}.
+When the shared memory is not longer needed, the memory window associated with that shared memory is not needed either. Therefore a call to \textbf{\texttt{MPI\_Win\_free()}} will free both, the allocated shared memory and the memory window.
 
 
-\subsubsection*{Pseudo Code}
+\subsubsection*{Pseudo Code for MPI$_{sm}$ programing}
 
-The following pseudo code provides an illustration of the sequence required to use the MPI$_{sm}$ programing mode. The code presented below uses the passive synchronization technique previously described.
+Figure \ref{fig:PseudoCode1} summarize a basic sequence that can be used for the MPI$_{sm}$ programing mode. The more relevant aspects of the code will be highlighted next.
 
-In line 6 a variable of type MPI\_Win is declared. In line 11 a shared memory communicator is created. Size and ranks for the processors belonging to the shared communicator are determined in lines 14 and 15. In line 18  shared memory are allocated. In line 27, just before the shared memory is utilized, the MPI\_Win\_lock\_all() is called. In line 23 a function is called to initialize the shared memory. In line 25 and 26, just before the shared memory can be utilized after initialization,calls to MPI\_Win\_sync() and MPI\_Barrirer() are done to ensure that the data is available. When the buffer containing the shared memory is not longer being modified, a call to the function MPI\_Unlock\_all() is required as shown in line 28. Finally the shared memory can be deallocated as shown in line 30.
+\medskip
 
-\newpage
+In line 3 a variable of type \textbf{\texttt{MPI\_Win}} declared. In line 5 the \textbf{\texttt{MPI\_Comm\_split\_type()}} function creates an intranode communicator (\textbf{\texttt{sm\_comm}}). The local (nodal) size and ranks for the processors belonging to the intranode communicator are determined in lines 8 and 9.
 
+\medskip
+
+Shared memory is allocated within the \textbf{\texttt{if-else}} statement in lines 13 to 19. Since the the \textbf{\texttt{MPI\_Win\_allocate\_shared()}} function is a collective one, all the processors in the communicator must call it. However, in this example, only rank 0 is actually allocating memory (look at the first parameter of the \textbf{\texttt{MPI\_Win\_allocate\_shared()}} function in lines 14 and 17). 
+
+\medskip
+
+Once the \textbf{\texttt{if-else}} statement is executed, only one process (rank 0) has access to the allocated shared memory. In order for the other processes to access that shared memory, the function \textbf{\texttt{MPI\_Win\_shared\_query()}} can be used to retrieve the local base addresses of other processes, as shown in line 22. (Strictly speaking, in this example, rank 0 don't need to call this function.) In calling this function, the second parameter is an integer corresponding to rank, within the intranode communicator, of the processor that allocated the shared memory. In our example this rank is 0. However, the MPI standard provides a predefined constant (\textbf{\texttt{MPI\_PROC\_NULL}}) that when used as the rank, returns the base address of the first process that specified a memory size greater than 0. Once this function returns, the variable \textbf{\texttt{sz}} will contain the size, in bytes, of the shared memory segment, while the variable \textbf{\texttt{dispUnit}} will contain the size, in bytes, of the basic type used in the allocation (4 bytes for float, 8 bytes for double etc.).
+
+
+\medskip
+
+Between lines 25 and 31 a passive synchronization access epoch is defined by the pair  \textbf{\texttt{MPI\_Win\_lock\_all}} and \textbf{\texttt{MPI\_Win\_unlock\_all}} functions for all processes sharing an RMA window.
+
+\medskip
+
+In line 26 a function is called to initialize the shared memory. In line 27 and 28, just before the shared memory can be utilized after initialization, calls to the \textbf{\texttt{MPI\_Win\_sync()}} function ensure completion of memory updates and then the \textbf{\texttt{MPI\_Barrirer()}} synchronize all processes on the node. That sequence must be repeated every time the shared memory buffer is modified and before it can be safely used.
+
+
+\medskip
+
+Finally, line 31 finish the passive synchronization access epoch, and line 34 free both, the allocated shared memory and the memory window.
+
+
+\subsubsection*{Pseudo Code to for hybrid programing}
+
+As mentioned earlier in this section, a hybrid program need a way to distinguish between processes that belong to a given node from processes belonging to different nodes. To accomplish this goal, the \textbf{\texttt{MPI\_Group\_translate\_ranks()}} function can be used as explained next, using Figure \ref{fig:PseudoCode2}.
+ 
+
+\medskip
+
+Lines 3 to 5 defines the global ranks and size of the \textbf{\texttt{MPI\_COMM\_WORLD}} communicator. In lines 7 and 8 an intranode communicator (\textbf{\texttt{sm\_comm}}) is created. Lines 10 and 11 define the local ranks within the intranode communicator.
+
+\medskip
+
+Lines 13 to 15 defines two MPI groups, one using the global and the other using the intranode communicators. Lines 17 to 19 declares and allocate two integer pointers (globalRank, localRank) each with a size equal to the size of global communicator. In lines 21 to 22 one of these pointers is initialized with as sequence representing the rank ids of global communicator.
+
+\medskip
+
+In line 24 the \textbf{\texttt{MPI\_Group\_translate\_ranks()}} function is called. This function requires as an input the global and local MPI groups created in lines 13 to 15, the integer array initialized in lines 21 to 22 (globalRank) and the size of the global communicator (worldSize). 
+
+\medskip
+
+The \textbf{\texttt{MPI\_Group\_translate\_ranks()}} function returns its output in the in the second pointer allocated in lines 17-19 (localRank). In general, the function sets the whole array to a predefined MPI integer constant (\textbf{\texttt{MPI\_UNDEFINED}}) except on the positions corresponding to processes belonging to the same node. 
+
+\medskip
+
+For example, running this code in four nodes, each having tree processes (for a total of 12 processes), after calling \textbf{\texttt{MPI\_Group\_translate\_ranks()}}, the content of the localRank array inside the processor having a worldRank equal to 7 (which corresponds to local rank 1 in node 2) is \emph{undefined} everywhere except in positions 6 to 8. The values in positions 6 to 8 corresponds to the local rank id for that node (0 to 2).
+
+
+\medskip
+
+With the information provided by the localRank pointer, it is easy to distinguish processes that belong to the same node from processes that exist elsewhere.
+
+
+%\newpage
+
+\begin{figure} [t!]
+\centering
+\captionsetup{justification=centering, singlelinecheck=false}
+    
 \begin{lstlisting}[style=CStyle]
-#include <stdlib.h>
-#include <stdio.h>
-
 int main(int argc, char *argv[])
 {
-    MPI_Win sm_winT;
+    MPI_Win smWin;
+    MPI_Comm sm_comm;
+    MPI_Comm_split_type(MPI_COMM_WORLD,MPI_COMM_TYPE_SHARED, 0,MPI_INFO_NULL, &sm_comm);
+    .
+    int mySharedRank, sharedSize;
+    MPI_Comm_rank(sm_comm,&mySharedRank);
+    MPI_Comm_size(sm_comm,&sharedSize);
+    .
+    double *a;
+    int size=1000;
+    if (mySharedRank == 0) {
+        MPI_Win_allocate_shared((MPI_Aint) size*sizeof(double), sizeof(double),MPI_INFO_NULL,
+                                                 sm_comm, &a, &smWin);
+    } else {
+        MPI_Win_allocate_shared((MPI_Aint) 0                 , sizeof(double),MPI_INFO_NULL,
+                                                 sm_comm, &a, &smWin);
+    } // end if //                            
     MPI_Aint sz;
     int dispUnit;
+    MPI_Win_shared_query(smWin, MPI_PROC_NULL, &sz,&dispUnit,&a);
     .
+    .
+    MPI_Win_lock_all(0,smWin);
+   initialize(a,size);
+    MPI_Win_sync(smWin);
+    MPI_Barrier(sm_comm);
+    .
+    .
+    MPI_Win_unlock_all(smWin);
+    .
+    .
+    MPI_Win_free(&smWin);
+    
+    return 0;
+} // end main() //
+\end{lstlisting}    
+\caption{Pseudo code for a basic MPI$_{sm}$ application.}
+\label{fig:PseudoCode1}
+\end{figure}
+
+
+\begin{figure} [t!]
+\centering
+\captionsetup{justification=centering, singlelinecheck=false}
+\begin{lstlisting}[style=CStyle]
+int main(int argc, char *argv[])
+{
+    int myWorldRank, worldSize;
+    MPI_Comm_rank(MPI_COMM_WORLD,&myWorldRank);
+    MPI_Comm_size(MPI_COMM_WORLD,&worldSize);
+    
     MPI_Comm sm_comm;
     MPI_Comm_split_type(MPI_COMM_WORLD,MPI_COMM_TYPE_SHARED, 0,MPI_INFO_NULL, &sm_comm);
 
-    int mySharedRank,sharedSize;
+    int mySharedRank;
     MPI_Comm_rank(sm_comm,&mySharedRank);
-    MPI_Comm_size(sm_comm,&sharedSize);
 
-    double *Temperature;
-    MPI_Win_allocate_shared((MPI_Aint) size*sizeof(double),
-                            sizeof(double),MPI_INFO_NULL,sm_comm,
-                            &Temperature,&sm_winT);
-    MPI_Win_shared_query(sm_winT, mySharedRank, &sz,&dispUnit,&Temperature_last);
+    MPI_Group sharedGroup,worldGroup;
+    MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
+    MPI_Comm_group(sm_comm, &sharedGroup);
+    
+    int *globalRank, *localRank;
+    globalRank = (int *) malloc( worldSize * sizeof(int) );
+    localRank  = (int *) malloc( worldSize * sizeof(int) );
+    
+    for (int i=0; i<worldSize; ++i) 
+        globalRank[i]=i;
+
+    MPI_Group_translate_ranks(worldGroup, worldSize, globalRank, sharedGroup, localRank);
     .
-    MPI_Win_lock_all(0,sm_winT);
-    initialize(Temperature,sRow, eRow, myWorldRank,worldSize-1);
-    MPI_Win_sync(sm_winT);
-    MPI_Barrier(sm_comm);
     .
-    MPI_Win_unlock_all(sm_winT);
+    free(globalRank);
+    free(localRank);
     .
-    MPI_Win_free(&sm_winT);
+    .
     MPI_Finalize();
     return 0;
 } // end main() //
-\end{lstlisting}
+\end{lstlisting}    
+\caption{Pseudo code for basic hybrid application.}
+\label{fig:PseudoCode2}
+\end{figure}
+
+
 
 
 
