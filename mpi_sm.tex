@@ -1,6 +1,6 @@
 \section{MPI Shared Memory (MPI$_{sm}$)}
 
-The MPI-3 standard developed an interface that allow processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of a shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
+The MPI-3 standard developed an interface that allows processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of a shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
 \medskip
 
 Additionally, to successfully develop hybrid programming, in which traditional send/receive functionality is used to communicate information among nodes while intra-node communication is handled via shared-memory, it is necessary a mechanism to distinguish between processes that belong to a given node from processes belonging to different nodes. This section also describes a procedure to achieve this goal. 
@@ -9,7 +9,7 @@ Additionally, to successfully develop hybrid programming, in which traditional s
 
 \medskip
 
-A description of the basic data types and function required by applications using MPI$_{sm}$, and pseudo codes illustrating their use, follows. The description is not intended to be comprehensive and the reader should consult the MPI-3 standard\cite{MPI-3}  or \cite{UsingAdvancedMPI} for a more information.
+A description of the basic data types and function required by applications using MPI$_{sm}$, and pseudo codes illustrating their use, follows. The description is not intended to be comprehensive and the reader should consult the MPI-3 standard\cite{MPI-3}  or \cite{UsingAdvancedMPI} for a more detailed information.
 
 
 \medskip
