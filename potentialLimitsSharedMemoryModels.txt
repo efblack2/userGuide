@@ -1,4 +1,4 @@
-\section{Memory bandwidth and Barriers as limits in shared memory programing models}
+\section{Potential limits in shared memory programing models}
 
 In this section two technical aspects that can potentially affect the overall performance of applications conforming to the shared memory programing model are evaluated. The first is related to the performance of the computer's memory sub-system, and the second relates to the cost of the barriers required by parallel program to ensure correct results.
 %\medskip
