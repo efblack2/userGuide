@@ -85,12 +85,14 @@ From the results shown in Figure \ref{fig:TriadTest} it can be seen that the sus
     \centering
     \captionsetup{justification=centering, singlelinecheck=false}
     \begin{subfigure}{.6\textwidth}
+      \centering
       \hspace*{-1.5cm} 
       \includegraphics[width=0.95\linewidth]{Plots/streamBenchmark/porter-Triad.pdf}
       \caption[]{Bandwidth per number of processes/threads.}
       \label{fig:Triad}
     \end{subfigure}%
     \begin{subfigure}{.6\textwidth}
+      \centering
       \hspace*{-1.5cm} 
       \includegraphics[width=0.95\linewidth]{Plots/streamBenchmark/porter-TriadRatio.pdf}
       \caption{Ratio MPI$_{sm}$ to OpenMP.}
@@ -109,38 +111,39 @@ A memory barrier is a type of instruction that requires an ordering constraint o
 
 \medskip
 
-The efficiency of the barrier implementation could potentially affect the overall performance of parallel applications conforming to the shared memory programing model. Therefore an effort was made to estimate, as accurate as possible, the time delay produced by the barrier itself, because a large difference in this delay between MPI$_{sm}$ and OpenMP could result crucial in choosing one or the other.
+
+The efficiency of the barrier implementation could potentially affect the overall performance of any parallel application, but particularly those conforming to the shared memory programing model. Therefore an effort was made to estimate, as accurate as possible, the time delay produced by the barrier itself. A large difference in the barrier delay between MPI$_{sm}$ and OpenMP could result determinant in choosing one or the other.
 
 \medskip
 
-
-Notice that what is being measured is not the time a particular thread/process wait in the barrier, which, in general, depends on the load unbalance; e.g. the time a thread/process is in the barrier waiting for its partners to arrive. However, the parameter being measured could be approximated by the minimum, among all the thread/process of the
-time just described.
-
-
+Notice that what is being measured is not the time a particular thread/process takes between entering and exiting
+the barrier because that time includes the time spend in the barrier waiting for its partners to arrive. Instead, the parameter being measured correspond to the time between the last thread/process entering the barrier to when all of them exit the barrier\cite{Schmidt_2012}, and could be approximated by the minimum time taken by all the thread/process between entering and exiting the barrier. Also notice that the parameter being measured is rather small and, therefore, its value is better represented by an average taken over a relatively large amount of measurements.
 
 
 \medskip
 
+Figure \ref{fig:PseudoCode3} presents a pseudo code of the algorithm used to determine the cost of the barrier in the MPI$_{sm}$ case; the algorithm for OpenMP case is essentially the same and, therefore, is not presented here. In lines 1-2 some variables are declared and initialized. Lines 3-13 consist of a for loop used to generate a sufficiently large amount of measurements required by an accurate result. Line 4 contains a barrier used to synchronize all the processes before performing the actual measurement. In lines 6 and 8 start and stop the clock, while line 7 contains the barrier being timed. In line 10, each process gets the time it spends in the barrier which, in general, includes a delay due to waiting for partners to arrive. In lines 11-12, the smallest time among all the processes is obtained and accumulated in the \textbf{\texttt{barrier\_time}} variable. Finally, in line 14 an average for the barrier time is obtained.
 
-\begin{figure} [h!]
+
+
+\begin{figure} [t!]
 \centering
 \captionsetup{justification=centering, singlelinecheck=false}
-    
 \begin{lstlisting}[style=CStyle]
+uint64_t max_iterations = 1000000L;
+uint64_t time, barrier_time=0;
 for (uint64_t n=0 ; n<max_iterations; ++n) {
-
     MPI_Barrier(sm_comm);
         
     clock_gettime(CLOCK_MONOTONIC, &start);
     MPI_Barrier(sm_comm);    
     clock_gettime(CLOCK_MONOTONIC, &end);
     
-    diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-    MPI_Allreduce( MPI_IN_PLACE, &diff, 1, MPI_UNSIGNED_LONG, MPI_MIN,sm_comm);
-    barrier_time+=diff;
-
+    time = 1000000000L * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+    MPI_Allreduce( MPI_IN_PLACE, &time, 1, MPI_UNSIGNED_LONG, MPI_MIN,sm_comm);
+    barrier_time+=time;
 }	// end for //
+barrier_time/=(max_iterations);
 \end{lstlisting}    
 \caption{Pseudo used to estimate MPI$_{sm}$ barrier time.}
 \label{fig:PseudoCode3}
@@ -149,17 +152,33 @@ for (uint64_t n=0 ; n<max_iterations; ++n) {
 
 \medskip
 
+Figure \ref{fig:BarrierAndErrorBars} shows result obtained on one system (stout). The left plot \ref{fig:Barrier} presents average barrier times, in nano-seconds, and the right plot \ref{fig:BarrierErrorBars} shows the variability of those measurement.
+
+\medskip
+
+Figure \ref{fig:Barrier} presents some contradictory results. While for the Gnu compiler the barrier time taken by OpenMP is larger than its corresponding MPI$_{sm}$ counterpart for any number of processes/threads, for the other two compilers (Intel and PGI) the opposite is true. 
+
+\medskip
+
+Figure \ref{fig:BarrierErrorBars} allows to see that the variability of the obtained results is relatively small.
+
+\medskip
+
+The results shown here for the stout system are similar to results obtained in the other systems used in this study.
+
 
 \begin{figure} [h!]
     \centering
     \captionsetup{justification=centering, singlelinecheck=false}
     \begin{subfigure}{.6\textwidth}
+      \centering
       \hspace*{-1.5cm} 
       \includegraphics[width=0.95\linewidth]{Plots/barrier/stout.pdf}
       \caption[]{Estimated time.}
       \label{fig:Barrier}
     \end{subfigure}%
     \begin{subfigure}{.6\textwidth}
+      \centering
       \hspace*{-1.5cm} 
       \includegraphics[width=0.95\linewidth]{Plots/barrier/stoutError.pdf}
       \caption{Errorbars to show variability of results.}
