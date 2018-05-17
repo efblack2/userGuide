@@ -58,9 +58,9 @@ All the examples and results shown in this work used the passive synchronization
 When the shared memory is not longer needed, the memory window associated with that shared memory is not needed either. Therefore a call to \textbf{\texttt{MPI\_Win\_free()}} will free both, the allocated shared memory and the memory window.
 
 
-\subsubsection*{Pseudo Code for MPI$_{sm}$ programing}
+\subsubsection*{Pseudo Code for MPI$_{sm}$ programming}
 
-Figure \ref{fig:PseudoCode1} summarize a basic sequence that can be used for the MPI$_{sm}$ programing mode. The more relevant aspects of the code will be highlighted next.
+Figure \ref{fig:PseudoCode1} summarize a basic sequence that can be used for the MPI$_{sm}$ programming mode. The more relevant aspects of the code will be highlighted next.
 
 \medskip
 
@@ -89,7 +89,7 @@ In line 26 a function is called to initialize the shared memory. In line 27 and 
 Finally, line 31 finish the passive synchronization access epoch, and line 34 free both, the allocated shared memory and the memory window.
 
 
-\subsubsection*{Pseudo Code to for hybrid programing}
+\subsubsection*{Pseudo Code to for hybrid programming}
 
 As mentioned earlier in this section, a hybrid program need a way to distinguish between processes that belong to a given node from processes belonging to different nodes. To accomplish this goal, the \textbf{\texttt{MPI\_Group\_translate\_ranks()}} function can be used as explained next, using Figure \ref{fig:PseudoCode2}.
  

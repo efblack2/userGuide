@@ -1,6 +1,6 @@
-\section{Share Memory Programing}
+\section{Share Memory Programming}
 
-In this section two computer programs are used to evaluate the performance of the MPI$_{sm}$ by comparing it to equivalent versions of the programs developed using OpenMP. The objective is to test the capabilities of MPI$_{sm}$ as a shared memory programing model and to evaluate its viability as an alternative to OpenMP.
+In this section two computer programs are used to evaluate the performance of the MPI$_{sm}$ by comparing it to equivalent versions of the programs developed using OpenMP. The objective is to test the capabilities of MPI$_{sm}$ as a shared memory programming model and to evaluate its viability as an alternative to OpenMP.
 
 
 \subsection*{Jacobi iteration}
@@ -24,7 +24,7 @@ Figure \ref{fig:Figure1} presents results from the Jacobi iteration program. Thi
       \caption{Jacobi iteration - Execution time}
       \label{fig:TimeDunkel}
     \end{subfigure}
-\caption{Comparing shared memory programing models - Jacobi iteration in dunkel}
+\caption{Comparing shared memory programming models - Jacobi iteration in dunkel}
 \label{fig:Figure1}
 \end{figure}
 
@@ -45,7 +45,7 @@ Figure \ref{fig:Figure2} presents similar results obtained in one node of \emph{
       \caption{Jacobi iteration - Execution time}
       \label{fig:TimeBW}
     \end{subfigure}
-\caption{Comparing shared memory programing models - Jacobi iteration in one \emph{Blue Waters} Node}
+\caption{Comparing shared memory programming models - Jacobi iteration in one \emph{Blue Waters} Node}
 \label{fig:Figure2}
 \end{figure}
 
@@ -62,7 +62,7 @@ Figures \ref{fig:TimeDunkel} and \ref{fig:TimeBW} are shown here to provide a pe
 
 
 \subsection*{Computational Fluid Dynamic}
-The second program used to compare these share memory programing models consists of a 3D Computational Fluid Dynamic (CFD) parallel program. The original version of the program was written in OpenMP. The program was modified to create an MPI$_{sm}$ version. The results shown corresponds to solutions using double precision arithmetics. 
+The second program used to compare these share memory programming models consists of a 3D Computational Fluid Dynamic (CFD) parallel program. The original version of the program was written in OpenMP. The program was modified to create an MPI$_{sm}$ version. The results shown corresponds to solutions using double precision arithmetics. 
 
 \medskip
 
@@ -85,7 +85,7 @@ Figure \ref{fig:Figure3} and \ref{fig:Figure4} presents results from the CFD pro
       \caption{Computational Fluid Dynamic - Execution time}
       \label{fig:TimeDunkelCFD}
     \end{subfigure}
-\caption{Comparing shared memory programing models - CFD in \emph{dunkel}}
+\caption{Comparing shared memory programming models - CFD in \emph{dunkel}}
 \label{fig:Figure3}
 \end{figure}
 
@@ -107,7 +107,7 @@ Figure \ref{fig:Figure3} and \ref{fig:Figure4} presents results from the CFD pro
       \caption{Computational Fluid Dynamic - Execution time}
       \label{fig:TimeBWCFD}
     \end{subfigure}
-\caption{Comparing shared memory programing models - CFD in one \emph{Blue Waters} Node}
+\caption{Comparing shared memory programming models - CFD in one \emph{Blue Waters} Node}
 \label{fig:Figure4}
 \end{figure}
 
@@ -144,7 +144,7 @@ The results of this new experiment are shown in Figure \ref{fig:taskset}. Notice
       \caption{Computational Fluid Dynamic - Execution time}
       \label{fig:TimeDunkelCFD_Pin}
     \end{subfigure}
-\caption{Comparing shared memory programing models - CFD in \emph{dunkel}}
+\caption{Comparing shared memory programming models - CFD in \emph{dunkel}}
 \label{fig:taskset}
 \end{figure}
 
@@ -166,6 +166,6 @@ Notice that the ratio of time taken by MPI$_{sm}$ to OpenMP, shown in Figure \re
 
 
 \subsection*{Analysis}
-The two cases presented in this section show conflicting results with respect to one shared memory programing model being better than the other. What is clear is that MPI$_{sm}$ can perform as good or better than OpenMP under the right conditions. To try to determine and understand what those condition are is part of what we are trying to accomplish.
+The two cases presented in this section show conflicting results with respect to one shared memory programming model being better than the other. What is clear is that MPI$_{sm}$ can perform as good or better than OpenMP under the right conditions. To try to determine and understand what those condition are is part of what we are trying to accomplish.
 
 

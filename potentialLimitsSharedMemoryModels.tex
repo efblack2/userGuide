@@ -1,6 +1,6 @@
-\section{Potential limits in shared memory programing models}
+\section{Potential limits in shared memory programming models}
 
-In this section two technical aspects that can potentially affect the overall performance of applications conforming to the shared memory programing model are evaluated. The first is related to the performance of the computer's memory sub-system, and the second relates to the cost of the barriers required by parallel program to ensure correct results.
+In this section two technical aspects that can potentially affect the overall performance of applications conforming to the shared memory programming model are evaluated. The first is related to the performance of the computer's memory sub-system, and the second relates to the cost of the barriers required by parallel program to ensure correct results.
 %\medskip
 
 
@@ -15,7 +15,7 @@ The STREAM benchmark\cite{McCalpin2007} is a suite of four (Copy, Scale, Add and
 
 \medskip
 
-For MPI$_{sm}$ to become a viable alternative to OpenMP in the context of the shared memory programing model, it is fundamental that its sustainable memory bandwidth compares favorably to its OpenMP counterpart.
+For MPI$_{sm}$ to become a viable alternative to OpenMP in the context of the shared memory programming model, it is fundamental that its sustainable memory bandwidth compares favorably to its OpenMP counterpart.
 
 \medskip
 
@@ -112,7 +112,7 @@ A memory barrier is a type of instruction that requires an ordering constraint o
 \medskip
 
 
-The efficiency of the barrier implementation could potentially affect the overall performance of any parallel application, but particularly those conforming to the shared memory programing model. Therefore an effort was made to estimate, as accurate as possible, the time delay produced by the barrier itself. A large difference in the barrier delay between MPI$_{sm}$ and OpenMP could result determinant in choosing one or the other.
+The efficiency of the barrier implementation could potentially affect the overall performance of any parallel application, but particularly those conforming to the shared memory programming model. Therefore an effort was made to estimate, as accurate as possible, the time delay produced by the barrier itself. A large difference in the barrier delay between MPI$_{sm}$ and OpenMP could result determinant in choosing one or the other.
 
 \medskip
 

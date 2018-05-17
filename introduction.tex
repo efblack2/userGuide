@@ -1,6 +1,6 @@
 \section{Introduction}
 %Although 
-The message passing interface (MPI) has been the predominant parallel programing model since the mid-1900. It constitutes the base of the \emph{distributed} programming model in which components located on networked computers communicate and coordinate their actions by passing messages. Contrastingly, in a \emph{shared-memory} programming model, parallel processes share a global memory address space that they read and write to asynchronously. 
+The message passing interface (MPI) has been the predominant parallel programming model since the mid-1900. It constitutes the base of the \emph{distributed} programming model in which components located on networked computers communicate and coordinate their actions by passing messages. Contrastingly, in a \emph{shared-memory} programming model, parallel processes share a global memory address space that they read and write to asynchronously. 
 
 Today's clusters often comprise many nodes connected by a fast network each having processors that contain multiple cores. The current trend in cluster architecture shows an increasing number of cores per node, but also a declining memory per core. In traditional MPI programming, when a process is run on each of the n cores, for performance efficiency the data is often replicated at each process causing the memory demands of the application to grow linearly with the number of processes. Fortunately, the hardware often supports direct memory loads and stores, so these cores can be programmed to share part of the node's memory, potentially improving performance by reducing memory motion and footprint\cite{UsingAdvancedMPI}. 
 
@@ -16,16 +16,16 @@ The MPI-3 standard added several functions to allow processes that exist within 
 
 \medskip
 
-This MPI Shared Memory model, if proven to be efficient, could in turn become a viable alternative to OpenMP as a shared memory programing model.
+This MPI Shared Memory model, if proven to be efficient, could in turn become a viable alternative to OpenMP as a shared memory programming model.
  
 \medskip
 
-The objective of this guide is to describe, via examples, the shared memory capabilities introduced by the MPI-3 standard, and to explore its viability in the context of both the \textbf{share memory programing model} and as a \textbf{hybrid programing model}.
+The objective of this guide is to describe, via examples, the shared memory capabilities introduced by the MPI-3 standard, and to explore its viability in the context of both the \textbf{share memory programming model} and as a \textbf{hybrid programming model}.
 
 
 \subsection*{Systems and Compilers used}
 
-All the computer utilized in this study corresponds to systems having more than one socket (ccNUMA nodes). These kind of architecture is ubiquitous nowadays. On those systems all the memory is accessible by all the cores, however the memory is distributed between the sockets. The efficient programing of these systems requires awareness of issues such as memory effects and thread/process placement.
+All the computer utilized in this study corresponds to systems having more than one socket (ccNUMA nodes). These kind of architecture is ubiquitous nowadays. On those systems all the memory is accessible by all the cores, however the memory is distributed between the sockets. The efficient programming of these systems requires awareness of issues such as memory effects and thread/process placement.
 
 
 Three compilers were used in the results presented in the following sections: the GNU \textbf{gcc}  version 7.3.0 (OpenMP 4.5), the Intel \textbf{icc} version 18.0.1 (OpenMP 5.0) and the  PGI \textbf{pgcc} version 18.3 (OpenMP 4.0). For the MPI implementation used, \textbf{gcc} and the \textbf{pgi} compliers both use \textbf{open-mpi} while the \textbf{intel} compiler used it own mpi implementation.
@@ -40,7 +40,7 @@ Three compilers were used in the results presented in the following sections: th
 The lessons learned during the development of this work will be remarked and commented in the coming sections. This document is organized as follows:
 
 \begin{itemize} 
-\item Section 2 describes a small set of functions and techniques required to use MPI$_{sm}$ as a shared memory and as hybrid programing model.
+\item Section 2 describes a small set of functions and techniques required to use MPI$_{sm}$ as a shared memory and as hybrid programming model.
 
 \item Section 3 describes some technical aspects that affects the performance of both MPI$_{sm}$ and OpenMP.
 
@@ -48,14 +48,14 @@ The lessons learned during the development of this work will be remarked and com
 
 \item Section 5 compares the performance of MPI$_{sm}$ and OpenMP.
 
-\item Section 6 compares the performance of two hybrid programing models: MPI+MPI$_{sm}$ and MPI+OpenMP.
+\item Section 6 compares the performance of two hybrid programming models: MPI+MPI$_{sm}$ and MPI+OpenMP.
 
-\item Section 7 list a set of pros and cons of MPI$_{sm}$ as a shared memory and as hybrid programing model.
+\item Section 7 list a set of pros and cons of MPI$_{sm}$ as a shared memory and as hybrid programming model.
 
 \item Section 8 contains a summary and conclusions.
 
 
-%\item Section 5 describe some additional functions and techniques required by hybrid programing. Additionally it compares two hybrid programing model: MPI+MPI$_{sm}$ and MPI+OpenMP.
+%\item Section 5 describe some additional functions and techniques required by hybrid programming. Additionally it compares two hybrid programming model: MPI+MPI$_{sm}$ and MPI+OpenMP.
 
 \end{itemize}
 
@@ -74,7 +74,7 @@ The lessons learned during the development of this work will be remarked and com
 
 
 Today's trend of having 
-an increasing number of cores per CPU (computing component, socket,chip) have created the need for approaches that combines the best of this two programing models: 
+an increasing number of cores per CPU (computing component, socket,chip) have created the need for approaches that combines the best of this two programming models: 
 
 
 Almost all chips are multicore these days
