@@ -19,6 +19,10 @@
 %\definecolor{backgroundColour}{gray}{0.90}
 \definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
 
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
 \lstdefinestyle{CStyle}{
     backgroundcolor=\color{backgroundColour},
     commentstyle=\color{Green},
@@ -95,7 +99,7 @@
 \include{introduction}                      % for SECTION 1    in "introduction.tex"
 \include{mpi_sm}                            % for SECTION 2    in "mpi_sm.tex"
 \include{potentialLimitsSharedMemoryModels} % for SECTION 3    in "potentialLimitsSharedMemoryModels.tex"
-%\include{share_memory_programing}          % for SECTION 4    in "share_memory_programing.tex"
+\include{share_memory_programing}          % for SECTION 4    in "shared_memory_programing.tex"
 %\include{hybrid_programing}                % for SECTION 5    in "hybrid_programing.tex"
 %\include{concl}                            % for CONCLUSION   in "concl.tex"
 
