@@ -87,8 +87,7 @@ A comparison between Figures \ref{fig:sharedMemoryProgrammingModel} and \ref{fig
 
 \medskip
 
-Figure \ref{fig:sharedMemoryRatioComparison2} clearly shows that the relative performance of the two versions produced by the Intel and PGI compilers is about the same. For the GNU compiler, the MPI$_{sm}$ version outperform the OpenMP version. However, this behavior of the GNU compiler did not occur in all the systems tested. For example, the results obtained on \textbf{koelsch} and presented in Figure \ref{fig:sharedMemoryProgrammingModel3}, 
-shows an even performance of MPI$_{sm}$ and OpenMP in all the tested compilers.
+Figure \ref{fig:sharedMemoryRatioComparison2} shows that the relative performance of the two versions is about the same for programs produced by the Intel and PGI compilers. For the GNU compiler, the MPI$_{sm}$ version outperforms the OpenMP version. However, this superior behavior of MPI$_{sm}$ version produced by the GNU compiler did not occur in all the systems tested. For example, the results obtained on \textbf{koelsch} and presented in Figure \ref{fig:sharedMemoryProgrammingModel3}, shows an even performance of MPI$_{sm}$ and OpenMP in all the tested compilers.
 
 
 \begin{figure} [t!]
@@ -139,6 +138,5 @@ shows an even performance of MPI$_{sm}$ and OpenMP in all the tested compilers.
 
 
 \subsection*{Summary}
-Falta escribir un summary para este capitulo.
-The two cases presented in this section show conflicting results with respect to one shared memory programming model being better than the other. What is clear is that MPI$_{sm}$ can perform as good or better than OpenMP under the right conditions. To try to determine and understand what those condition are is part of what we are trying to accomplish.
 
+In this section, a comparison of the performance of two shared memory programming paradigms, OpenMP and MPI$_{sm}$, was discussed. The performance was associated with the time required to execute a simple algorithm. The results obtained lead to conclude that the performance of OpenMP and MPI$_{sm}$ in the shared memory programming model, is essentially the same.
