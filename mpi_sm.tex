@@ -1,4 +1,4 @@
-\section{MPI Shared Memory (MPI$_{sm}$)}
+\section{MPI Shared Memory (MPI$_{sm}$)} \label{MPISharedMemory}
 
 The MPI-3 standard developed an interface that allows processes inside a node to share the nodes' memory utilizing the well established functionality of Remote Memory Access (RMA), and some recently introduced functions. This permits the implementation of a shared memory programming model within a strictly MPI paradigm. This section lists and briefly describes a minimum set functions and data types used in writing MPI$_{sm}$ programs. 
 \medskip
@@ -89,7 +89,7 @@ In line 26 a function is called to initialize the shared memory. In line 27 and 
 Finally, line 31 finish the passive synchronization access epoch, and line 34 free both, the allocated shared memory and the memory window.
 
 
-\subsubsection*{Pseudo Code to for hybrid programming}
+\subsubsection*{Pseudo Code for hybrid programming} \label{PseudoCodeForHybridProgramming}
 
 As mentioned earlier in this section, a hybrid program need a way to distinguish between processes that belong to a given node from processes belonging to different nodes. To accomplish this goal, the \textbf{\texttt{MPI\_Group\_translate\_ranks()}} function can be used as explained next, using Figure \ref{fig:PseudoCode2}.
  

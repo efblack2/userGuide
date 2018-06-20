@@ -12,6 +12,19 @@ A simple algorithm implementing a three point stencil, similar to the one used t
 \centering
 \captionsetup{justification=centering, singlelinecheck=false}
 \begin{lstlisting}[style=CStyle]
+for(int i = start; i < end; ++i) {
+    derivative[i] =  0.25*(fun[i+1] + fun[i-1] - 2.0 * fun[i]);
+} // end for //
+\end{lstlisting}    
+\caption{Three point stencil.}
+\label{fig:ThreePointStencil}
+\end{figure}
+
+\begin{comment}
+\begin{figure} [h!]
+\centering
+\captionsetup{justification=centering, singlelinecheck=false}
+\begin{lstlisting}[style=CStyle]
 for(int l = start; l < end; ++l) {
     for(int r = 1; r < ydim ; ++r) {
         for(int c = 1; c < xdim; ++c) {
@@ -24,19 +37,20 @@ for(int l = start; l < end; ++l) {
 \caption{Three point stencil.}
 \label{fig:ThreePointStencil}
 \end{figure}
+\end{comment}
+
 
 \medskip
 
-Results from two versions (MPI$_{sm}$ vs OpenMP) of the program, produced by three compilers, are compared discussed below.
+Results from two versions of the program (MPI$_{sm}$ and OpenMP), produced by three compilers, are compared discussed below.
 
 \subsection*{Preliminary Result}
 
-Figure \ref{fig:sharedMemoryProgrammingModel} presents results obtained on \textbf{stout}. Results on other systems show the same general behavior. The plot on the left (\ref{fig:sharedMemoryComparison}) shows actual execution time while the right plot presents the ratio between the time taken by the OpenMP to the MPI$_{sm}$ version of this program as a function of the number of threads/processors used. Notice that this ratio is the opposite of the one used in Figures \ref{fig:TriadRatioBefore} and \ref{fig:TriadRatio}. In every instance, the ratios were selected in such a way that any value greater than one means that MPI$_{sm}$ performs better than OpenMP.
-
+Figure \ref{fig:sharedMemoryProgrammingModel} presents results obtained on \textbf{stout}. Results on other systems show the same general behavior. The plot on the left (\ref{fig:sharedMemoryComparison}) shows actual execution time while the right plot (\ref{fig:sharedMemoryRatioComparison}) presents the ratio between the time taken by the OpenMP to the MPI$_{sm}$ version of this program, as a function of the number of threads/processors used. Notice that this ratio is the opposite of the one used in Figures \ref{fig:TriadRatioBefore} and \ref{fig:TriadRatio}. In every instance, the ratios were selected in such a way that any value greater than one means that MPI$_{sm}$ performs better than OpenMP.
 
 \medskip
 
-In Figure \ref{fig:sharedMemoryComparison} the segmented lines correspond to OpenMP while the continuous lines represent MPI$_{sm}$. This figure clearly shows that the OpenMP version (segmented lines) outperforms the MPI$_{sm}$ version as soon as more than one thread/process are used in the solution. Figure \ref{fig:sharedMemoryRatioComparison} permits a better assessment of the problem by showing how the relative performance of MPI$_{sm}$, with respect to OpenMP, clearly deteriorates as more processes are incorporated.
+In Figure \ref{fig:sharedMemoryComparison} the segmented lines correspond to OpenMP while the continuous lines represent MPI$_{sm}$. This figure clearly shows that, in general, the OpenMP version (segmented lines) outperforms the MPI$_{sm}$ version when more than one thread/process are used in the solution. Figure \ref{fig:sharedMemoryRatioComparison} permits a better assessment of the problem by showing how the relative performance of MPI$_{sm}$ clearly deteriorates with respect to OpenMP as more processes are incorporated.
 
 
 \medskip
@@ -67,15 +81,15 @@ Given the results of the stream benchmark and of the barriers comparison obtaine
 
 \subsection*{First Touch Policy}
 
-Exploring the possible causes of the behavior shown in Figure \ref{fig:sharedMemoryProgrammingModel}, a difference between the OpenMP and the MPI$_{sm}$ implementation of the algorithm was found: while in the OpenMP version, the arrays were initialized in parallel, in the MPI$_{sm}$ version a single process was in charged of the initialization. This apparently simple difference trigger a well known problem in ccNuma systems, \textbf{page placement by first touch}. 
+Exploring the possible causes of the behavior shown in Figure \ref{fig:sharedMemoryProgrammingModel}, an important  difference between the OpenMP and the MPI$_{sm}$ implementation of the algorithm was discovered: while in the OpenMP version, the arrays were initialized in parallel, in the MPI$_{sm}$ version a single process was in charged of the initialization. This apparently simple difference trigger a well known problem in ccNuma systems, \textbf{page placement by first touch}. 
 
 \medskip
 
-Page placement by first touch is a well known policy in which a memory page gets mapped into the locality domain (socket) of the processor that first writes to it. Processors usually performs better when memory is directly attached to the socket that they are on. Any access to memory from another socket has additional latency overhead compared to accessing local memory. Therefore, remote memory accesses should be to avoided. Proper placement of data will increase the overall bandwidth and improve the latency to memory.
+Page placement by first touch is a well known policy in which a memory page gets mapped into the locality domain (socket) of the processor that first writes to it. Processors usually performs better when memory is directly attached to the socket that they are on. Any access to memory from another socket has additional latency overhead compared to accessing local memory. Therefore, remote memory accesses should be to avoided if possible. Proper placement of data will increase the overall bandwidth and improve the latency to memory.
 
 \medskip
 
-To initialize the array using a single process in the MPI$_{sm}$ version was a conceptual error. However, we decided to show the faulty results (Figure \ref{fig:sharedMemoryProgrammingModel}) to remark, on the one hand, the consequences of that error, and, on the other hand, to show that it can happen with MPI$_{sm}$.
+To initialize the array using a single process in the MPI$_{sm}$ version was a conceptual error. However, we decided to show the faulty results (Figure \ref{fig:sharedMemoryProgrammingModel}) to remark, on the one hand, the consequences of that error, and, on the other hand, to show that it can also happen with MPI$_{sm}$.
 
 \subsection*{Corrected Result}
 
@@ -87,7 +101,7 @@ A comparison between Figures \ref{fig:sharedMemoryProgrammingModel} and \ref{fig
 
 \medskip
 
-Figure \ref{fig:sharedMemoryRatioComparison2} shows that the relative performance of the two versions is about the same for programs produced by the Intel and PGI compilers. For the GNU compiler, the MPI$_{sm}$ version outperforms the OpenMP version. However, this superior behavior of MPI$_{sm}$ version produced by the GNU compiler did not occur in all the systems tested. For example, the results obtained on \textbf{koelsch} and presented in Figure \ref{fig:sharedMemoryProgrammingModel3}, shows an even performance of MPI$_{sm}$ and OpenMP in all the tested compilers.
+Figure \ref{fig:sharedMemoryRatioComparison2} shows that the relative performance of the two versions is about the same for programs produced by the Intel and PGI compilers. For the GNU compiler, the MPI$_{sm}$ version outperforms the OpenMP version. However, this superior behavior of MPI$_{sm}$ version produced by the GNU compiler did not occur in all the systems tested. For example, the results obtained on a different system, \textbf{koelsch}, presented in Figure \ref{fig:sharedMemoryProgrammingModel3}, shows an even performance of MPI$_{sm}$ and OpenMP in all the tested compilers.
 
 
 \begin{figure} [t!]
@@ -135,8 +149,12 @@ Figure \ref{fig:sharedMemoryRatioComparison2} shows that the relative performanc
 \end{figure}
 
 
-
+\medskip
 
 \subsection*{Summary}
 
-In this section, a comparison of the performance of two shared memory programming paradigms, OpenMP and MPI$_{sm}$, was discussed. The performance was associated with the time required to execute a simple algorithm. The results obtained lead to conclude that the performance of OpenMP and MPI$_{sm}$ in the shared memory programming model, is essentially the same.
+In this section, a comparison of the performance of two shared memory programming paradigms, OpenMP and MPI$_{sm}$, was discussed. The performance was associated with the time required to execute a simple algorithm. The results obtained lead to conclude that the achievable performance of these two shared memory programming models is essentially the same. This implies that the decision to choose between them should not be based on pure performance.
+
+
+
+%using of OpenMP and MPI$_{sm}$ in the  is similar.
