@@ -1,0 +1,26 @@
+\section{Conclusion} 
+%Although 
+
+The MPI shared memory programming capabilities introduced by the MPI-3 standard was evaluated. Some comparison to other shared memory programming model (OpenMP) were performed. It was found that, in general, the performance of well tuned $MPI_{sm}$ programs is similar to their OpenMP equivalent.
+
+
+
+\subsection*{Pure Shared Memory Programing Model}
+
+Although performance of $MPI_{sm}$ programs can be as good as their OpenMP equivalent, its the lack of support of  work-sharing scheduling in loops work-sharing constructs (dynamic, guided, etc.) require more effort on the part of the programmer. That could harm its acceptance. Additionally, being a relatively new shared memory programming model, make it harder to compete with well established 20+ years old OpenMP.
+
+
+\subsection*{Hybrid Programing Model}
+
+As a hybrid programing model $MPI_{sm}$ could have some advantages over OpenMP. Among them, it is worth to mention:
+
+\begin{itemize} 
+  \item The programmer do not have to worry about the level of thread support.
+  \item Application libraries do not need to be thread-safe.
+  \item Although still can exist, less prone to race conditions.
+  \item No interference between the affinity policies of MPI and OpenMP, which can harm performance.  
+  \item No thread overhead.
+\end{itemize}
+
+
+
