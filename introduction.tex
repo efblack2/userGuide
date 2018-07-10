@@ -2,21 +2,22 @@
 %Although 
 The message passing interface (MPI) has been the predominant parallel programming model since the mid-1900. It constitutes the base of the \emph{distributed} programming model in which components located on networked computers communicate and coordinate their actions by passing messages. Contrastingly, in a \emph{shared-memory} programming model, parallel processes share a global memory address space that they read and write to asynchronously. 
 
-Today's clusters often comprise many nodes connected by a fast network each having processors that contain multiple cores. The current trend in cluster architecture shows an increasing number of cores per node, but also a declining memory per core. In traditional MPI programming, when a process is run on each of the n cores, for performance efficiency the data is often replicated at each process causing the memory demands of the application to grow linearly with the number of processes. Fortunately, the hardware often supports direct memory loads and stores, so these cores can be programmed to share part of the node's memory, potentially improving performance by reducing memory motion and footprint\cite{UsingAdvancedMPI}. 
+\medskip
 
+Today's clusters often comprise many nodes connected by a fast network each having processors that contain multiple cores. The current trend in cluster architecture shows an increasing number of cores per node, but also a declining memory per core. In traditional MPI programming, when a process is run on each of the cores of a node, for performance reasons, some data structures are often replicated at each process, causing the memory demands of the application to grow linearly with the number of processes. Fortunately, the hardware often supports direct memory loads and stores, so these cores can be programmed to share part of the node's memory, potentially improving performance by reducing memory motion and footprint\cite{UsingAdvancedMPI}. 
 
 
 \subsection*{Programming for Multicore}
 
-The evolution towards multicore architecture has also force a shift in the traditional use of the \emph{distributed} programming model, in which all the communication between processes is handled essentially by the send/receive family of MPI functions, towards approaches that combines message passing with shared-memory techniques, often called \textbf{hybrid programming}\cite{UsingAdvancedMPI}. In this hybrid model, the threads or processes within a node communicate directly with each other by sharing the node's memory, while the inter-node communication is indeed handled using the send/receive traditional approach. One of the most common choice (among many) for hybrid programming, combines MPI for communication across nodes and OpenMP to share memory within a node. This approach is often referred as MPI+OpenMP.
+The evolution towards multicore architecture has also forced a shift in the traditional use of the \emph{distributed} programming model, in which all the communication between processes is handled essentially by the send/receive family of MPI functions, towards approaches that combines messaging passing with shared-memory techniques, often called \textbf{hybrid programming}\cite{UsingAdvancedMPI}. In this hybrid model, the threads or processes within a node communicate directly with each other by sharing the node's memory, while the inter-node communication is indeed handled using the send/receive traditional approach. One of the most common choices (among many) for hybrid programming, combines MPI for communication across nodes and OpenMP to share memory within a node. This approach is often referred as MPI+OpenMP.
 
 \medskip
 
-The MPI-3 standard added several functions to allow processes that exist within a node to directly allocate and share the node's memory, in a way similar to OpenMP. This new MPI Shared Memory model (MPI$_{sm}$) allows another approach to hybrid programming in which, traditional MPI is still used for inter-node communication while MPI$_{sm}$ is used for the intra-node communication through shared memory. In this document, this hybrid model is denoted as MPI+MPI$_{sm}$ to distinguish it from MPI+OpenMP. Brinskiy\cite{brinskiy2015} affirms that MPI$_{sm}$ can be used to incrementally change existing MPI codes in order to accelerate communication between processes on the shared-memory nodes.
+The MPI-3 standard added several functions to allow processes that exist within a node to directly allocate and share the node's memory, in a way similar to OpenMP. This new MPI Shared Memory model (MPI$_{sm}$) allows another approach to hybrid programming in which, traditional MPI is still used for inter-node communication while MPI$_{sm}$ is used for the intra-node communication through shared memory. In this document, this hybrid model is denoted as MPI+MPI$_{sm}$ to distinguish it from MPI+OpenMP. Brinskiy and Lubin\cite{brinskiy2015} affirm that MPI$_{sm}$ can be used to incrementally change existing MPI codes in order to accelerate communication between processes on the shared-memory nodes.
 
 \medskip
 
-This MPI Shared Memory model, if proven to be efficient, could in turn become a viable alternative to OpenMP as a shared memory programming model.
+This MPI shared memory model, if proven to be efficient, could in turn become a viable alternative to OpenMP as a shared memory programming model.
  
 \medskip
 
@@ -40,15 +41,15 @@ Three compilers were used in the results presented in the following sections: th
 The lessons learned during the development of this work will be remarked and commented in the coming sections. This document is organized as follows:
 
 \begin{itemize} 
-\item Section 2 describes a small set of functions and techniques required to use MPI$_{sm}$ as a shared memory and as hybrid programming model.
+\item Section 2 describes a small set of functions and techniques required to use MPI$_{sm}$ as a shared memory and as a hybrid programming model.
 
-\item Section 3 describes some technical aspects that affects the performance of both MPI$_{sm}$ and OpenMP.
+\item Section 3 describes some technical aspects that affect the performance of both MPI$_{sm}$ and OpenMP.
 
-\item Section 4 presents and compares the performance of two versions of a program conforming to the share memory programming model (OpenMP Vs. MPI$_{sm}$)
+\item Section 4 presents and compares the performance of two versions of a program conforming to the shared memory programming model (OpenMP Vs. MPI$_{sm}$)
 
 \item Section 5 compares the performance of a traditional and a hybrid (MPI+MPI$_{sm}$) parallel implementation of the sparse matrix-vector multiplication (SPMV) kernel.
 
-\item Section 6 contains some conclusions and recommendations.
+\item Section 6 contains a brief summary and some conclusions.
 
 
 \end{itemize}

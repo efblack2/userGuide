@@ -50,7 +50,7 @@ Figure \ref{fig:sharedMemoryProgrammingModel} presents results obtained on \text
 
 \medskip
 
-In Figure \ref{fig:sharedMemoryComparison} the segmented lines correspond to OpenMP while the continuous lines represent MPI$_{sm}$. This figure clearly shows that, in general, the OpenMP version (segmented lines) outperforms the MPI$_{sm}$ version when more than one thread/process are used in the solution. Figure \ref{fig:sharedMemoryRatioComparison} permits a better assessment of the problem by showing how the relative performance of MPI$_{sm}$ clearly deteriorates with respect to OpenMP as more processes are incorporated.
+In Figure \ref{fig:sharedMemoryComparison} the segmented lines correspond to OpenMP while the continuous lines represent MPI$_{sm}$. This figure clearly shows that, in general, the OpenMP version (segmented lines) outperforms the MPI$_{sm}$ version when more than one thread/process are used in the solution. Figure \ref{fig:sharedMemoryRatioComparison} permits a better assessment of the problem by showing how the relative performance of MPI$_{sm}$ has clearly deteriorated with respect to OpenMP as more processes are incorporated.
 
 
 \medskip
@@ -81,11 +81,11 @@ Given the results of the stream benchmark and of the barriers comparison obtaine
 
 \subsection*{First Touch Policy}
 
-Exploring the possible causes of the behavior shown in Figure \ref{fig:sharedMemoryProgrammingModel}, an important  difference between the OpenMP and the MPI$_{sm}$ implementation of the algorithm was discovered: while in the OpenMP version, the arrays were initialized in parallel, in the MPI$_{sm}$ version a single process was in charged of the initialization. This apparently simple difference trigger a well known problem in ccNuma systems, \textbf{page placement by first touch}. 
+Exploring the possible causes of the behavior shown in Figure \ref{fig:sharedMemoryProgrammingModel}, an important  difference between the OpenMP and the MPI$_{sm}$ implementation of the algorithm was discovered: while in the OpenMP version, the arrays were initialized in parallel, in the MPI$_{sm}$ version a single process was in charge of the initialization. This apparently simple difference trigger a well known problem in ccNuma systems, \textbf{page placement by first touch}. 
 
 \medskip
 
-Page placement by first touch is a well known policy in which a memory page gets mapped into the locality domain (socket) of the processor that first writes to it. Processors usually performs better when memory is directly attached to the socket that they are on. Any access to memory from another socket has additional latency overhead compared to accessing local memory. Therefore, remote memory accesses should be to avoided if possible. Proper placement of data will increase the overall bandwidth and improve the latency to memory.
+Page placement by first touch is a well known policy in which a memory page gets mapped into the locality domain (socket) of the processor that first writes to it. Processors usually perform better when memory is directly attached to the socket that they are on. Any access to memory from another socket has additional latency overhead compared to accessing local memory. Therefore, remote memory accesses should be avoided if possible. Proper placement of data will increase the overall bandwidth and improve the latency to memory.
 
 \medskip
 

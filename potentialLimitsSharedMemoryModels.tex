@@ -6,12 +6,12 @@ In this section two technical aspects that can potentially affect the overall pe
 
 \subsection*{Stream Benchmark}
 
-For a long time we have witness how CPUs are being getting faster much more quickly than the computer's memory sub-system. Modern multi-core processors have become voracious consumers of data, and, as a consequence, more and more programs are being limited in performance by the memory bandwidth of the system, rather than by the computational performance of the CPU\cite{McCalpin2007}. It is, therefore, particularly important to be able to determine the memory bandwidth of the system at hand. 
+For a long time we have witnessed how CPUs are getting faster much more quickly than the computer's memory sub-system. Modern multi-core processors have become voracious consumers of data, and, as a consequence, more and more programs are being limited in performance by the memory bandwidth of the system, rather than by the computational performance of the CPU\cite{McCalpin2007}. It is, therefore, particularly important to be able to determine the memory bandwidth of the system at hand. 
 
 \medskip
 
 
-The STREAM benchmark\cite{McCalpin2007} is a suite of four simple tests (Copy, Scale, Add and Triad) that measures sustainable memory bandwidth (in MB/s) and the corresponding computation rate for simple vector kernels. In general, it is used to measure the evolution of the memory bandwidth of shared memory systems as more computing component are included in the test. Traditionally, the test has been implemented using OpenMP and the computing component are usually referred as threads.
+The STREAM benchmark\cite{McCalpin2007} is a suite of four simple tests (Copy, Scale, Add and Triad) that measures sustainable memory bandwidth (in MB/s) and the corresponding computation rate for simple vector kernels. In general, it is used to measure the evolution of the memory bandwidth of shared memory systems as more computing components are included in the test. Traditionally, the test has been implemented using OpenMP and the computing components are usually referred as threads.
 
 \medskip
 
@@ -51,7 +51,7 @@ In Figure \ref{fig:TriadBefore} the segmented lines correspond to OpenMP while t
 
 \medskip
 
-The lack of a \emph{by-default} thread affinity control policy of all the compilers used in the study produced the erratic behavior shown in the Figure \ref{fig:TriadBefore} for the OpenMP cases, because the threads are allowed to be moved, by the OS, not only to a different core but also to a different socket. On the other hand, the more stable behavior that can be observed in the MPI$_{sm}$ cases is due to the fact that each of the MPI implementations used in the study indeed has a \emph{by-default} binding policy for the processes running in the node.
+The lack of a \emph{by-default} thread affinity control policy of all the compilers used in the study produced the erratic behavior shown in the Figure \ref{fig:TriadBefore} for the OpenMP cases, because the threads are allowed to be moved, by the OS, not only to a different core but also to a different socket. On the other hand, the more stable behavior that can be observed in the MPI$_{sm}$ cases is due to the fact that each of the MPI implementations used in the study indeed has a \emph{by-default} binding policy for the processes running on the node.
 
 \medskip
 
@@ -59,11 +59,13 @@ The lack of a \emph{by-default} thread affinity control policy of all the compil
 
 Before the release of the OpenMP version 4.0 specification the mechanisms for controlling thread affinity were compiler-dependent. However, that specification introduced a standardized mean to control thread affinity allowing, for the first time, a uniform way to have fine grain control over the affinity policy to compilers conforming to the standard. Two new concepts were introduced: binding policy and place partition.
 
+\medskip
+
 The binding policy determines if the threads will be bound and how they will be distributed, while the place partition is the set of places to which threads can be bound. Therefore, a simple way of controlling the binding policy is by defining the \textbf{\texttt{OMP\_PROC\_BIND}} environment variable. Similarly, the place partition is set by defining the \textbf{\texttt{OMP\_PLACES}} environment variable.
 
 \medskip
 
-In our case, we found convenient to define
+In our case, we found convenient to define:
 
 \begin{itemize} 
 
@@ -77,10 +79,10 @@ The above definitions mean that the threads will indeed be bound, and distribute
 
 \medskip
 
-Once a thread policy was set for the OpenMP cases, the stream tests were run again and the results are shown in Figure \ref{fig:TriadTest}. As before, the left plot (\ref{fig:Triad}) shows the actual bandwidth achieved while the right plot (\ref{fig:TriadRatio}) show the MPI$_{sm}$ to OpenMP ratio obtained. 
+Once a thread policy was set for the OpenMP cases, the stream tests were run again and the results are shown in Figure \ref{fig:TriadTest}. As before, the left plot (\ref{fig:Triad}) shows the actual bandwidth achieved while the right plot (\ref{fig:TriadRatio}) shows the MPI$_{sm}$ to OpenMP ratio obtained. 
 
 \medskip
-From the results shown in Figure \ref{fig:TriadTest} it can be seen that the sustainable memory bandwidth achievable by MPI$_{sm}$ is effectively at pair with its OpenMP counterpart.
+From the results shown in Figure \ref{fig:TriadTest} it can be seen that the sustainable memory bandwidth achievable by MPI$_{sm}$ is effectively at the pair with its OpenMP counterpart.
 
 
 \begin{figure} [h!]
@@ -153,7 +155,7 @@ barrier_time/=(max_iterations);
 
 \medskip
 
-Figure \ref{fig:BarrierAndErrorBarsForStout} shows result obtained on one system (stout). The left plot (\ref{fig:BarrierStout}) presents average barrier time, in nano-seconds, as a function of the number of threads/processes. The right plot (\ref{fig:BarrierErrorBarsStout}) shows that the variability of those measurement is relatively small.
+Figure \ref{fig:BarrierAndErrorBarsForStout} shows result obtained on one system (stout). The left plot (\ref{fig:BarrierStout}) presents average barrier time, in nanoseconds, as a function of the number of threads/processes. The right plot (\ref{fig:BarrierErrorBarsStout}) shows that the variability of those measurements is relatively small.
 
 \medskip
 
@@ -188,7 +190,7 @@ Figure \ref{fig:BarrierStout} expose some contradictory results. While for the G
 
 \medskip
 
-Figure \ref{fig:BarrierAndErrorBarsForKoelsch} presents results obtained in other system (koelsch). In this system, the OpenMP barrier time is always smaller than its MPI$_{sm}$ counterpart.
+Figure \ref{fig:BarrierAndErrorBarsForKoelsch} presents results obtained in another system (koelsch). In this system, the OpenMP barrier time is always smaller than its MPI$_{sm}$ counterpart.
 
 \medskip
 
@@ -235,51 +237,4 @@ Results show that:
 \label{fig:BarrierAndErrorBarsForKoelsch}
 \end{figure}
 
-
-
-
-
-\begin{comment}
-
-
-Two identical versions of the stream benchmarks one using  and 
- were created and it 
- results are compared below for several systems. 
- 
- 
- However, the arrays 
-
-
-
- capabilities of the 
-
-an MPI$_{sm}$ version of the program was developed and used to compare its performance to that obtained using its 
-
-
-
-OpenMP versions of the STREAM benchmark program has been used to measure the evolution of the sustainable memory bandwidth of shared memory system as more threads are included in the test. 
-
-
-
-
-What is STREAM?
-The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MB/s) and the corresponding computation rate for simple vector kernels. 
-
-Why should I care?
-
-Computer cpus are getting faster much more quickly than computer memory systems. 
-
-As this progresses, 
-
-As an extreme example, several current high-end machines run simple arithmetic kernels for out-of-cache operands at 4-5 percent of their rated peak speeds --- that means that they are spending 95-96 percent of their time idle and waiting for cache misses to be satisfied.
-
-The STREAM benchmark is specifically designed to work with datasets much larger than the available cache on any given system, so that the results are (presumably) more indicative of the performance of very large, vector style applications.
-
-If you want more words, I have written a paper on STREAM: Sustainable Memory Bandwidth in Current High Performance Computers
-
-A somewhat broader look on the issue, see my paper: Memory Bandwidth and Machine Balance in Current High Performance Computers. STREAM is also a useful component of models for scaling of homogeneous throughput workloads (like the SPEC CPU "rate" benchmarks). 
-
-Examples of models based on STREAM measurements that do a pretty good job of estimating SPECfp rate2000 scaling are included in several presentations.
-
-\end{comment}
 
